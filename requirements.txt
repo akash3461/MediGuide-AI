@@ -7,6 +7,6 @@ pypdf==5.6.1
 python-dotenv==1.1.0
 langchain-pinecone==0.2.8
 langchain-google-genai==2.1.8
-google-generativeai==0.8.5
+# google-generativeai==0.8.5  # not installed in the current environment
 langchain-community==0.3.26
 -e .
