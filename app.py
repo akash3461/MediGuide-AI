@@ -1,7 +1,7 @@
-from flask import Flask, render_template, jsonify, request
+from flask import Flask, render_template, request, jsonify
 from src.helper import download_hugging_face_embeddings
 from langchain_pinecone import PineconeVectorStore
-from langchain_openai import ChatOpenAI
+from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_core.prompts import ChatPromptTemplate
@@ -9,67 +9,95 @@ from dotenv import load_dotenv
 from src.prompt import *
 import os
 
-
 app = Flask(__name__)
 
-
+# Load environment variables
 load_dotenv()
 
-PINECONE_API_KEY=os.environ.get('PINECONE_API_KEY')
-OPENAI_API_KEY=os.environ.get('OPENAI_API_KEY')
+PINECONE_API_KEY = os.getenv("PINECONE_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 
-<<<<<<< HEAD
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
-os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
+os.environ["GOOGLE_API_KEY"] = GOOGLE_API_KEY
 
-=======
-os.environ["PINECONE_API_KEY"] = Pinecone_apikey
-os.environ["OPENAI_API_KEY"] = Openai_ApiKey
->>>>>>> dd6e77a93426d390c1769dd1c03f22771d1ff66e
-
+# Load Hugging Face embeddings
 embeddings = download_hugging_face_embeddings()
 
-index_name = "medical-chatbot" 
-# Embed each chunk and upsert the embeddings into your Pinecone index.
+# Connect to existing Pinecone index
+index_name = "medical-chatbot"
+
 docsearch = PineconeVectorStore.from_existing_index(
     index_name=index_name,
     embedding=embeddings
 )
 
+retriever = docsearch.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 3}
+)
 
+# Gemini 2.5 Flash Model
+chatModel = ChatGoogleGenerativeAI(
+    model="gemini-2.5-flash",
+    temperature=0
+)
 
-
-retriever = docsearch.as_retriever(search_type="similarity", search_kwargs={"k":3})
-
-chatModel = ChatOpenAI(model="gpt-4o")
+# Prompt
 prompt = ChatPromptTemplate.from_messages(
     [
         ("system", system_prompt),
-        ("human", "{input}"),
+        ("human", "{input}")
     ]
 )
 
-question_answer_chain = create_stuff_documents_chain(chatModel, prompt)
-rag_chain = create_retrieval_chain(retriever, question_answer_chain)
+# RAG Chain
+question_answer_chain = create_stuff_documents_chain(
+    chatModel,
+    prompt
+)
 
+rag_chain = create_retrieval_chain(
+    retriever,
+    question_answer_chain
+)
 
-
+# Home Page
 @app.route("/")
 def index():
-    return render_template('chat.html')
+    return render_template("chat.html")
 
-
-
+# Chat Endpoint
 @app.route("/get", methods=["GET", "POST"])
 def chat():
     msg = request.form["msg"]
-    input = msg
-    print(input)
+
+    print("Question:", msg)
+
     response = rag_chain.invoke({"input": msg})
-    print("Response : ", response["answer"])
-    return str(response["answer"])
+
+    print("Answer:", response["answer"])
+
+    return response["answer"]
 
 
+# JSON chat endpoint for frontend
+@app.route("/chat", methods=["POST"])
+def chat_json():
+    data = request.get_json(silent=True) or {}
+    # support both `message` (frontend) and `msg` (other clients)
+    msg = data.get("message") or data.get("msg")
+    if not msg:
+        return jsonify({"error": "No message provided"}), 400
 
-if __name__ == '__main__':
-    app.run(host="0.0.0.0", port= 8080, debug= True)
+    print("Question:", msg)
+
+    response = rag_chain.invoke({"input": msg})
+
+    answer = response.get("answer") or str(response)
+    print("Answer:", answer)
+
+    return jsonify({"reply": answer})
+
+# Run Flask App
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8080, debug=True)

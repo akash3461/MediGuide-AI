@@ -1,0 +1,74 @@
+:root{
+  --bg: #f4f7fb;
+  --card: #ffffff;
+  --primary: #0b63ff;
+  --accent: #6fb1fc;
+  --muted: #64748b;
+  --glass: rgba(255,255,255,0.6);
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family: Inter, 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial;
+  background: linear-gradient(180deg, #eaf3ff 0%, var(--bg) 100%);
+  color:#0f1724;
+  -webkit-font-smoothing:antialiased;
+}
+
+.chatbot-container{
+  width:100%;
+  max-width:820px;
+  margin:28px auto;
+  display:block;
+  gap:18px;
+  padding:12px 20px;
+}
+
+.chatbot-header{grid-column:1/-1; display:flex; align-items:center; justify-content:space-between; padding:18px 20px; background:linear-gradient(90deg,var(--primary), var(--accent)); color:#fff; border-radius:12px}
+.chatbot-header .left{display:flex; gap:12px; align-items:center}
+.chatbot-header .avatar{width:48px;height:48px;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;border-radius:12px;font-size:22px}
+.chatbot-header .title{font-weight:700;font-size:1.05rem}
+.chatbot-header .status{font-size:0.86rem;opacity:0.9}
+.icon-btn{background:transparent;border:1px solid rgba(255,255,255,0.15);color:#fff;padding:8px 12px;border-radius:10px;cursor:pointer}
+
+.chat-window{background:var(--card);border-radius:12px;padding:18px;height:68vh;display:flex;flex-direction:column;box-shadow:0 8px 30px rgba(11,99,255,0.06);overflow:hidden}
+.chat-list{flex:1;overflow:auto;padding-right:8px;display:flex;flex-direction:column;gap:12px}
+.message{max-width:78%;padding:12px 14px;border-radius:14px;line-height:1.5;box-shadow:0 2px 6px rgba(16,24,40,0.04)}
+.message .meta{font-size:0.78rem;color:var(--muted);margin-bottom:6px;display:flex;gap:8px;align-items:center}
+.message .body{white-space:pre-wrap}
+.message.bot{align-self:flex-start;background:linear-gradient(180deg,#f8fbff,#fff);border:1px solid rgba(15,23,42,0.04)}
+.message.user{align-self:flex-end;background:linear-gradient(90deg,var(--primary),#1a6bff);color:#fff;border-bottom-right-radius:6px}
+.avatar-sm{display:inline-flex;width:28px;height:28px;align-items:center;justify-content:center;border-radius:8px;background:rgba(11,99,255,0.06)}
+.message.typing .body{background:transparent;padding:0}
+.typing-indicator{display:inline-flex;gap:6px;align-items:center}
+.typing-indicator span{width:8px;height:8px;background:rgba(15,23,42,0.15);border-radius:50%;animation:dot 1.2s infinite}
+.typing-indicator span:nth-child(2){animation-delay:0.15s}
+.typing-indicator span:nth-child(3){animation-delay:0.3s}
+@keyframes dot{0%{opacity:.2;transform:translateY(0)}50%{opacity:1;transform:translateY(-6px)}100%{opacity:.2;transform:translateY(0)}}
+
+.composer{display:flex;gap:12px;padding:12px 14px;border-top:1px solid #eef4ff;background:linear-gradient(180deg,transparent,rgba(11,99,255,0.02));align-items:center}
+.composer input{flex:1;padding:12px 16px;border-radius:999px;border:1px solid #e7eefc;background:#fbfdff;outline:none;font-size:0.98rem}
+.composer input:focus{box-shadow:0 6px 18px rgba(11,99,255,0.08);border-color:rgba(11,99,255,0.22)}
+.composer button{background:var(--primary);color:#fff;border:none;padding:10px 16px;border-radius:999px;font-weight:700;cursor:pointer}
+.suggestions{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.suggestion{padding:10px;border-radius:10px;background:#f6fbff;border:1px solid #eef6ff;cursor:pointer;text-align:left}
+.suggestion:hover{background:#eef6ff}
+.small-muted{font-size:0.82rem;color:var(--muted);margin-top:8px}
+
+/* sidebar removed — styles kept if needed */
+.sidebar{display:none}
+.sidebar h4{margin:0;font-size:1rem}
+.suggestions{display:flex;flex-direction:column;gap:8px}
+.suggestion{padding:10px;border-radius:10px;background:#f6fbff;border:1px solid #eef6ff;cursor:pointer}
+.suggestion:hover{background:#eef6ff}
+
+.footer{grid-column:1/-1;text-align:center;color:var(--muted);font-size:0.85rem;margin-top:6px}
+
+/* Responsive */
+@media (max-width:880px){.chatbot-container{grid-template-columns:1fr;padding:12px}.chat-window,.sidebar{height:62vh}.chatbot-header{border-radius:10px}}
+
+/* scrollbar */
+.chat-list::-webkit-scrollbar{width:8px}
+.chat-list::-webkit-scrollbar-thumb{background:linear-gradient(180deg,rgba(11,99,255,0.12),rgba(11,99,255,0.06));border-radius:999px}
+
