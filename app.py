@@ -18,9 +18,14 @@ load_dotenv()
 PINECONE_API_KEY=os.environ.get('PINECONE_API_KEY')
 OPENAI_API_KEY=os.environ.get('OPENAI_API_KEY')
 
+<<<<<<< HEAD
 os.environ["PINECONE_API_KEY"] = PINECONE_API_KEY
 os.environ["OPENAI_API_KEY"] = OPENAI_API_KEY
 
+=======
+os.environ["PINECONE_API_KEY"] = Pinecone_apikey
+os.environ["OPENAI_API_KEY"] = Openai_ApiKey
+>>>>>>> dd6e77a93426d390c1769dd1c03f22771d1ff66e
 
 embeddings = download_hugging_face_embeddings()
 
