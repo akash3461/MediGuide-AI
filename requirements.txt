@@ -7,5 +7,7 @@ python-dotenv==1.1.0
 langchain-pinecone==0.2.8
 langchain-google-genai==2.1.8
 # google-generativeai is not required here and can conflict with langchain-google-genai
+# Google Gemini
+google-ai-generativelanguage==0.6.18
 langchain-community==0.3.26
 -e .
